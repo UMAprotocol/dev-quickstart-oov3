@@ -1,2 +1,2 @@
-[profile.ci.fuzz]
-runs = 10_000
+[profile.default]
+libs = ['node_modules', 'lib']

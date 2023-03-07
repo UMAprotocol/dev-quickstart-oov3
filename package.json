@@ -1,0 +1,12 @@
+{
+  "name": "dev-quickstart-oov3",
+  "version": "1.0.0",
+  "description": "Developer quickstart for integrating with UMA Optimistic Oracle V3",
+  "repository": "git@github.com:UMAprotocol/dev-quickstart-oov3.git",
+  "author": "UMA Team",
+  "license": "AGPL-3.0",
+  "devDependencies": {},
+  "dependencies": {
+    "@uma/core": "^2.51.0"
+  }
+}
