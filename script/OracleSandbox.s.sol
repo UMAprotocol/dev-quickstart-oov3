@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
+import "forge-std/console.sol";
 import "forge-std/Script.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@uma/core/contracts/common/implementation/AddressWhitelist.sol";
@@ -8,7 +9,6 @@ import "@uma/core/contracts/common/implementation/TestnetERC20.sol";
 import "@uma/core/contracts/data-verification-mechanism/implementation/Constants.sol";
 import "@uma/core/contracts/data-verification-mechanism/implementation/Finder.sol";
 import "@uma/core/contracts/data-verification-mechanism/implementation/IdentifierWhitelist.sol";
-import "@uma/core/contracts/data-verification-mechanism/implementation/Registry.sol";
 import "@uma/core/contracts/data-verification-mechanism/implementation/Store.sol";
 import "@uma/core/contracts/data-verification-mechanism/test/MockOracleAncillary.sol";
 import "@uma/core/contracts/optimistic-oracle-v3/implementation/OptimisticOracleV3.sol";
@@ -37,15 +37,20 @@ contract OracleSandboxScript is Script {
 
         // Deploy UMA ecosystem contracts with mocked oracle and selected currency.
         Finder finder = new Finder();
-        Registry registry = new Registry();
+        console.log("Deployed Finder at %s", address(finder));
         Store store = new Store(FixedPoint.fromUnscaledUint(0), FixedPoint.fromUnscaledUint(0), address(0));
+        console.log("Deployed Store at %s", address(store));
         AddressWhitelist addressWhitelist = new AddressWhitelist();
+        console.log("Deployed AddressWhitelist at %s", address(addressWhitelist));
         IdentifierWhitelist identifierWhitelist = new IdentifierWhitelist();
+        console.log("Deployed IdentifierWhitelist at %s", address(identifierWhitelist));
         MockOracleAncillary mockOracle = new MockOracleAncillary(address(finder), address(0));
+        console.log("Deployed MockOracleAncillary at %s", address(mockOracle));
         if (defaultCurrency == address(0)) {
             defaultCurrency = address(
                 new TestnetERC20(defaultCurrencyName, defaultCurrencySymbol, defaultCurrencyDecimals)
             );
+            console.log("Deployed TestnetERC20 at %s", defaultCurrency);
         }
 
         // Register UMA ecosystem contracts, whitelist currency and identifier.
@@ -57,12 +62,10 @@ contract OracleSandboxScript is Script {
         identifierWhitelist.addSupportedIdentifier(defaultIdentifier);
         store.setFinalFee(defaultCurrency, FixedPoint.Unsigned(minimumBond / 2));
 
-        // Deploy Optimistic Oracle V3 and register it in the Finder and the Registry.
+        // Deploy Optimistic Oracle V3 and register it in the Finder.
         OptimisticOracleV3 oo = new OptimisticOracleV3(finder, IERC20(defaultCurrency), defaultLiveness);
+        console.log("Deployed Optimistic Oracle V3 at %s", address(oo));
         finder.changeImplementationAddress(OracleInterfaces.OptimisticOracleV3, address(oo));
-        registry.addMember(1, msg.sender);
-        registry.registerContract(new address[](0), address(oo));
-        registry.removeMember(1, msg.sender);
 
         vm.stopBroadcast();
     }
