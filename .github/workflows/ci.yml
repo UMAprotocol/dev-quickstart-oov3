@@ -24,8 +24,5 @@ jobs:
       - name: Install deps
         run: forge install
 
-      - name: Install package deps
-        run: yarn
-
       - name: Run tests
         run: forge test
