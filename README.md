@@ -1,4 +1,5 @@
 # Quickstart for Integrating with UMA Optimistic Oracle V3
+<a href="https://docs.uma.xyz/developers/optimistic-oracle"><img alt="OO" src="https://miro.medium.com/v2/resize:fit:1400/1*hLSl9M87P80A1pZ9vuTvyA.gif" width=600></a>
 
 This repository contains example contracts and tests for integrating with the UMA Optimistic Oracle V3.
 
