@@ -25,9 +25,19 @@ contract DataAsserter {
 
     mapping(bytes32 => DataAssertion) public assertionsData;
 
-    event DataAsserted(bytes32 indexed dataId, bytes32 data, address indexed asserter, bytes32 assertionId);
+    event DataAsserted(
+        bytes32 indexed dataId,
+        bytes32 data,
+        address indexed asserter,
+        bytes32 indexed assertionId
+    );
 
-    event DataAssertionResolved(bytes32 indexed dataId, bytes32 data, address indexed asserter, bytes32 assertionId);
+    event DataAssertionResolved(
+        bytes32 indexed dataId,
+        bytes32 data,
+        address indexed asserter,
+        bytes32 indexed assertionId
+    );
 
     constructor(address _defaultCurrency, address _optimisticOracleV3) {
         defaultCurrency = IERC20(_defaultCurrency);
@@ -84,18 +94,31 @@ contract DataAsserter {
             defaultIdentifier,
             bytes32(0) // No domain.
         );
-        assertionsData[assertionId] = DataAssertion(dataId, data, asserter, false);
+        assertionsData[assertionId] = DataAssertion(
+            dataId,
+            data,
+            asserter,
+            false
+        );
         emit DataAsserted(dataId, data, asserter, assertionId);
     }
 
     // OptimisticOracleV3 resolve callback.
-    function assertionResolvedCallback(bytes32 assertionId, bool assertedTruthfully) public {
+    function assertionResolvedCallback(
+        bytes32 assertionId,
+        bool assertedTruthfully
+    ) public {
         require(msg.sender == address(oo));
         // If the assertion was true, then the data assertion is resolved.
         if (assertedTruthfully) {
             assertionsData[assertionId].resolved = true;
             DataAssertion memory dataAssertion = assertionsData[assertionId];
-            emit DataAssertionResolved(dataAssertion.dataId, dataAssertion.data, dataAssertion.asserter, assertionId);
+            emit DataAssertionResolved(
+                dataAssertion.dataId,
+                dataAssertion.data,
+                dataAssertion.asserter,
+                assertionId
+            );
             // Else delete the data assertion if it was false to save gas.
         } else delete assertionsData[assertionId];
     }
