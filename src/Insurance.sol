@@ -48,7 +48,15 @@ contract Insurance {
         address payoutAddress,
         bytes memory insuredEvent
     ) public returns (bytes32 policyId) {
-        policyId = keccak256(abi.encode(insuredEvent, payoutAddress));
+        //Add zero amount checks
+        require(insuranceAmount > 0, "Insurance amount must be greater than zero");
+
+        //Also consider a minimum length
+        require(insuredEvent.length > 0, "Insured event cannot be empty");
+
+        // Generate a unique policy ID. 
+        //To avoid collision I added the block.timestamp, you can use a universal nonce or block number.
+        policyId = keccak256(abi.encode(insuredEvent, payoutAddress, block.timestamp));
         require(policies[policyId].payoutAddress == address(0), "Policy already exists");
         policies[policyId] = Policy({
             insuranceAmount: insuranceAmount,
